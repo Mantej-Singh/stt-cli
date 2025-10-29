@@ -23,6 +23,7 @@ I created this tool to streamline my workflow when using command-line interfaces
 
 - **Operating System:** Windows
 - **Python:** Python 3.x (if running from source)
+- **No Admin Rights** - As it does not install, simply runs in the background 
 
 ## Installation
 
