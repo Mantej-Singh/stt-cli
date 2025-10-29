@@ -10,20 +10,54 @@ This project is a simple command-line interface (CLI) tool for Windows that prov
 
 ## Purpose and Motivation
 
-I created this tool to streamline my workflow when using command-line interfaces, especially with tools like Gemini CLI and Claude Code. It allows for hands-free typing in any CLI window, making it easier to interact with these powerful tools.  Macs already have built-in speech-to-text features, and there are apps like SuperWhisper, Voicy, and Voice Mode that work nicely with tools like Claude Code. But when I looked for something similar on Windows, I couldn’t find anything that did the job. That’s what pushed me to build this tool. I wanted Windows users who work in command-line interfaces to have an easy way to type using their voice. Hopefully, this tool fills that gap and makes voice control in the CLI much smoother.
+I created this tool specifically for Windows users working on corporate laptops where Win+H is disabled by IT policies. After discovering that the built-in Windows voice typing was blocked on my work machine, I needed a solution that would:
+
+- **Work without admin rights** - No installation or system modifications required
+- **Run portably** - Just a single .exe file that runs from anywhere
+- **Bypass corporate restrictions** - Doesn't touch system settings or require permissions
+- **Support CLI workflows** - Specifically designed for command-line interfaces like Windows Terminal, PowerShell, and AI coding tools
+
+I primarily use this with **Claude Code** and **Gemini CLI**, where voice input dramatically speeds up my workflow. Macs already have built-in speech-to-text features, and there are apps like SuperWhisper, Voicy, and Voice Mode that work nicely with these tools. But when I looked for a Windows alternative that worked around corporate restrictions, nothing existed. This tool fills that gap for Windows users who need voice control in the CLI but are blocked by enterprise policies.
+
+## The Problem: Win+H Disabled on Corporate Laptops
+
+Many corporate and enterprise Windows laptops have the built-in voice typing feature (Win+H) disabled by IT policies and group restrictions. When you try to use it, you'll see this frustrating message:
+
+<div align="center">
+  <img src="screens/Win+H_disabled.png" alt="Windows Voice Typing Disabled by Organization" width="400" />
+</div>
+
+**"Voice typing is not available - Speech service are managed by your organization"**
+
+This leaves users without any voice-to-text capability for their command-line workflows, especially problematic when:
+- You can't install software requiring admin rights
+- Group policies prevent modifying system settings
+- You need hands-free typing for accessibility or efficiency
+- You're working with AI coding assistants like Claude Code or Gemini CLI
+
+## The Solution: STT-CLI Running in the Background
+
+STT-CLI solves this by running quietly in the background without requiring admin rights or system modifications. Simply double-tap Left Alt to start speaking, and your words appear directly in your terminal:
+
+<div align="center">
+  <img src="screens/cc.png" alt="STT-CLI in action with Claude Code" width="800" />
+  <p><i>Using STT-CLI with Claude Code (cc) - speaking "testing testing 1 2 3" types directly into the terminal</i></p>
+</div>
+
+The application runs as a system tray icon, works with any CLI window, and bypasses corporate restrictions since it's just a portable executable that doesn't require installation.
 
 ## Features
 
 - **Global Hotkey:** Press the **Left Alt** key twice in quick succession to start or stop recording.
 - **Background Operation:** The application runs in the background without a visible window.
 - **System Tray Icon:** A system tray icon indicates when the application is running and when it is actively listening.
-- **CLI-Focused:** The transcribed text is typed directly into the active command-line window (e.g. Windows Terminal, PowerShell, cc).
+- **CLI-Focused:** The transcribed text is typed directly into the active command-line window (e.g. Windows Terminal, PowerShell, Claude Code).
 
 ## Requirements
 
 - **Operating System:** Windows
 - **Python:** Python 3.x (if running from source)
-- **No Admin Rights** - As it does not install, simply runs in the background 
+- **No Admin Rights Required** - Works perfectly on corporate laptops with restricted permissions. The application doesn't install anything, doesn't modify system settings, and runs entirely in user space. Just download and run - no installation, no admin prompt, no group policy conflicts. 
 
 ## Installation
 
@@ -85,4 +119,4 @@ This project uses the `SpeechRecognition` library, which in turn uses the Google
 
 ---
 
-*Built Together with Gemini CLI*
+*Built Together with Gemini CLI, Enhanced Further with Claude Code*
