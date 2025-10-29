@@ -8,7 +8,7 @@
 
 This project is a simple command-line interface (CLI) tool for Windows that provides speech-to-text functionality. It runs in the background, listens for a global hotkey, and transcribes your speech into the active command-line window.
 
-## Purpose and Motivation
+## 🎯 Purpose and Motivation
 
 I created this tool specifically for Windows users working on corporate laptops where Win+H is disabled by IT policies. After discovering that the built-in Windows voice typing was blocked on my work machine, I needed a solution that would:
 
@@ -103,10 +103,16 @@ If you prefer to run the application from the source code, you will need to have
 If you want to build the executable yourself, you can use `PyInstaller`:
 
 ```bash
-pyinstaller --onefile --name "speech-to-text-cli" --icon "stt-cli2.ico" --noconsole --add-data "stt-cli2.ico;." --add-data "stt-cli2.png;." main.pyw
+# First, make sure all dependencies are installed
+pip install -r requirements.txt
+
+# Then build the executable
+python -m PyInstaller --onefile --name "speech-to-text-cli" --icon "stt-cli2.ico" --noconsole --add-data "stt-cli2.ico;." --add-data "stt-cli2.png;." --clean main.pyw
 ```
 
-## Future Development
+**Note**: The `--clean` flag ensures a fresh build. The resulting executable will be in the `dist` folder (approximately 77MB).
+
+## 📝 Future Development
 
 This is an initial release. Future updates will include:
 
@@ -116,6 +122,46 @@ This is an initial release. Future updates will include:
 ## Speech-to-Text Library
 
 This project uses the `SpeechRecognition` library, which in turn uses the Google Web Speech API for transcription.
+
+---
+
+## 🎉 Changelog
+
+### v1.3 (October 29, 2025) - Balloon Notifications
+
+**New Feature: Visual Feedback**
+
+<div align="center">
+  <img src="screens/Recording-Started.png" alt="Recording Started Notification" width="400" />
+  <p><i>Windows balloon notification when recording starts</i></p>
+</div>
+
+<div align="center">
+  <img src="screens/Recording-Stopped.png" alt="Recording Stopped Notification" width="400" />
+  <p><i>Windows balloon notification when recording stops</i></p>
+</div>
+
+STT-CLI now shows Windows balloon notifications when you start or stop recording! You no longer need to watch the system tray icon - you'll get clear visual confirmation that your hotkey press was detected.
+
+**What's New:**
+- 🔔 **Balloon notifications** appear when recording starts/stops
+- ✅ **Start message** reminds you how to stop recording ("Double-tap Left Alt to stop recording")
+- ✅ **Stop message** confirms recording has ended
+- 🎨 Professional Windows notification system integration
+- ⚙️ Configurable - can be disabled in code if needed
+
+**Bug Fixes:**
+- Fixed multi-toggle issue where rapid Alt key presses would cause recording to flash on/off
+- Added 800ms cooldown period after toggle to prevent accidental multi-toggles
+- Added exception handling to keyboard callbacks to prevent listener crashes
+- Recording now reliably stops when you want it to!
+
+**Under the Hood:**
+- Improved thread safety with proper event synchronization
+- Better error handling and logging
+- Resource optimization (icons cached at startup)
+- Type hints for better code maintainability
+- Version: 1.0 → 1.3
 
 ---
 

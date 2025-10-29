@@ -3,6 +3,5 @@ pynput
 PyAudio
 pystray
 Pillow
-pyperclip
 psutil
 pywin32
