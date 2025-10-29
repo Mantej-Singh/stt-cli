@@ -4,14 +4,14 @@ This project is a simple command-line interface (CLI) tool for Windows that prov
 
 ## Purpose and Motivation
 
-I created this tool to streamline my workflow when using command-line interfaces, especially with tools like Gemini CLI and Claude Code. It allows for hands-free typing in any CLI window, making it easier to interact with these powerful tools.  Macs already have built-in speech-to-text features, and there are apps like SuperWhisper, Voicy, and Voice Mode that work nicely with tools like Claude Code. But when I looked for something similar on Windows, I couldn’t find anything that did the job. That’s what pushed me to build this tool—I wanted Windows users who work in command-line interfaces to have an easy way to type using their voice. Hopefully, this tool fills that gap and makes voice control in the CLI much smoother.
+I created this tool to streamline my workflow when using command-line interfaces, especially with tools like Gemini CLI and Claude Code. It allows for hands-free typing in any CLI window, making it easier to interact with these powerful tools.  Macs already have built-in speech-to-text features, and there are apps like SuperWhisper, Voicy, and Voice Mode that work nicely with tools like Claude Code. But when I looked for something similar on Windows, I couldn’t find anything that did the job. That’s what pushed me to build this tool. I wanted Windows users who work in command-line interfaces to have an easy way to type using their voice. Hopefully, this tool fills that gap and makes voice control in the CLI much smoother.
 
 ## Features
 
 - **Global Hotkey:** Press the **Left Alt** key twice in quick succession to start or stop recording.
 - **Background Operation:** The application runs in the background without a visible window.
 - **System Tray Icon:** A system tray icon indicates when the application is running and when it is actively listening.
-- **CLI-Focused:** The transcribed text is typed directly into the active command-line window (e.g., Windows Terminal, PowerShell, cc).
+- **CLI-Focused:** The transcribed text is typed directly into the active command-line window (e.g. Windows Terminal, PowerShell, cc).
 
 ## Requirements
 
