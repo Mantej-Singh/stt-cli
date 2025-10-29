@@ -34,7 +34,7 @@ If you prefer to run the application from the source code, you will need to have
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/Mantej-Singh/stt-cli.git
-    cd your-repo
+    cd stt-cli
     ```
 
 2.  **Install the dependencies:**
