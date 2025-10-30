@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# PyInstaller
+build/
+dist/
+*.spec.backup
+
+# Logs
+*.log
+app.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+nul
+
+# Test results
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build outputs (EXE goes in GitHub Releases, not in repo)
+*.exe
+*.msi
+*.dmg
+
+# Don't ignore the .spec file - we WANT to commit it!
+# (PyInstaller build configuration should be version controlled)
+!*.spec

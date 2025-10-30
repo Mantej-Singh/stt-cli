@@ -98,6 +98,36 @@ If you prefer to run the application from the source code, you will need to have
 6.  Press the **Left Alt** key twice again to stop recording.
 7.  To quit the application, right-click on the system tray icon and select "Quit".
 
+### Command-Line Options
+
+**Note**: The executable is built as a GUI application (no console window) for clean system tray operation. Command-line flags work when running from Python source, but not in the compiled `.exe`. This is by design for Windows GUI apps.
+
+**From Python source:**
+```bash
+python main.pyw --version  # Show version information
+python main.pyw --help     # Show usage help
+```
+
+To check the version of the installed executable, see the GitHub release notes or the Windows Apps & Features list after Winget installation.
+
+### Logs and Troubleshooting
+
+If you encounter issues, check the log file located at:
+```
+%TEMP%\stt-cli\app.log
+```
+
+On Windows, this typically resolves to:
+```
+C:\Users\YourUsername\AppData\Local\Temp\stt-cli\app.log
+```
+
+The log file contains detailed information about:
+- Application startup and shutdown
+- Recording start/stop events
+- Microphone and speech recognition errors
+- CLI window detection
+
 ## Building from Source
 
 If you want to build the executable yourself, you can use `PyInstaller`:
@@ -126,6 +156,20 @@ This project uses the `SpeechRecognition` library, which in turn uses the Google
 ---
 
 ## 🎉 Changelog
+
+### v1.3.1 (October 30, 2025) - Winget Readiness
+
+**Enhancements for Package Manager Distribution:**
+- ✅ Added `--version` flag to display version information
+- ✅ Added `--help` flag to show usage instructions
+- ✅ Added programmatic `__version__` variable for better version management
+- 📖 Documented log file location in README (`%TEMP%\stt-cli\app.log`)
+- 🎯 Prepared for Windows Package Manager (Winget) submission
+
+**Why This Matters:**
+This release makes STT-CLI ready for distribution via Winget (Windows Package Manager). Users will soon be able to install with a simple `winget install Mantej-Singh.STT-CLI` command!
+
+---
 
 ### v1.3 (October 29, 2025) - Balloon Notifications
 
