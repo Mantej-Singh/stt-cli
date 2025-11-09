@@ -55,15 +55,40 @@ The application runs as a system tray icon, works with any CLI window, and bypas
 
 ## Requirements
 
-- **Operating System:** Windows
+- **Operating System:** Windows 10/11
 - **Python:** Python 3.x (if running from source)
-- **No Admin Rights Required** - Works perfectly on corporate laptops with restricted permissions. The application doesn't install anything, doesn't modify system settings, and runs entirely in user space. Just download and run - no installation, no admin prompt, no group policy conflicts. 
+- **No Admin Rights Required** - Works perfectly on corporate laptops with restricted permissions. The application doesn't install anything, doesn't modify system settings, and runs entirely in user space. Just download and run - no installation, no admin prompt, no group policy conflicts.
 
 ## Installation
 
-### Using the Executable
+### 🚀 Method 1: Windows Package Manager (Winget) - RECOMMENDED
 
-The easiest way to use this tool is to download the pre-compiled executable (`.exe`) from the [dist folder](dist/speech-to-text-cli.exe). Simply download the file and run it.
+The easiest way to install STT-CLI is through Windows Package Manager:
+
+```bash
+winget install Mantej-Singh.STT-CLI
+```
+
+**Advantages:**
+- ✅ One-command installation
+- ✅ Automatic updates via `winget upgrade --all`
+- ✅ Trusted Microsoft repository
+- ✅ Perfect for corporate IT deployment
+- ✅ No manual download required
+
+**Check for updates:**
+```bash
+winget upgrade Mantej-Singh.STT-CLI
+```
+
+**Uninstall:**
+```bash
+winget uninstall Mantej-Singh.STT-CLI
+```
+
+### Method 2: Direct Download
+
+Alternatively, download the pre-compiled executable (`.exe`) from the [GitHub Releases](https://github.com/Mantej-Singh/stt-cli/releases/latest). Simply download the file and run it.
 
 #### System Tray Icon
 ![look for this](screens/sys_tray.png)
