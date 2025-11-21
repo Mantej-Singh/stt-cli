@@ -1,11 +1,11 @@
 # ====================================================
 # STT-CLI
-# Version: 1.3.1
-# Build Date: October 30, 2025
+# Version: 1.4.0
+# Build Date: November 21, 2025
 # Author: Mantej Singh Dhanjal
 # ====================================================
 
-__version__ = "1.3.1"
+__version__ = "1.4.0"
 
 import speech_recognition as sr
 from pynput import keyboard
@@ -21,6 +21,8 @@ import psutil
 from PIL import Image
 import pystray
 from typing import Optional
+import json
+import win32com.client
 
 # --- Logging Configuration ---
 # Create log directory in Windows TEMP folder to avoid permission issues
@@ -119,6 +121,206 @@ def is_cli_window(hwnd: int) -> bool:
         return False
 
 
+# ============================================================================
+# SETTINGS PERSISTENCE
+# ============================================================================
+
+def get_settings_path() -> str:
+    """
+    Get the path to settings.json file in %APPDATA%.
+
+    Returns:
+        Absolute path to settings.json
+    """
+    appdata = os.getenv('APPDATA', os.path.expanduser('~'))
+    settings_dir = os.path.join(appdata, 'stt-cli')
+    os.makedirs(settings_dir, exist_ok=True)
+    return os.path.join(settings_dir, 'settings.json')
+
+
+def load_settings() -> dict:
+    """
+    Load settings from JSON file.
+    Creates default settings if file doesn't exist.
+
+    Returns:
+        Dictionary containing user settings
+    """
+    settings_path = get_settings_path()
+    default_settings = {
+        "auto_start": False,
+        "first_run": True,
+        "version": __version__
+    }
+
+    try:
+        if os.path.exists(settings_path):
+            with open(settings_path, 'r', encoding='utf-8') as f:
+                settings = json.load(f)
+                # Merge with defaults in case new settings were added
+                for key, value in default_settings.items():
+                    if key not in settings:
+                        settings[key] = value
+                # Update version to current
+                settings["version"] = __version__
+                return settings
+        else:
+            # First run - create default settings
+            logging.info("Creating default settings (first run)")
+            save_settings(default_settings)
+            return default_settings
+    except Exception as e:
+        logging.error(f"Failed to load settings: {e}")
+        return default_settings
+
+
+def save_settings(settings: dict) -> bool:
+    """
+    Save settings to JSON file.
+
+    Args:
+        settings: Dictionary containing settings to save
+
+    Returns:
+        True if successful, False otherwise
+    """
+    settings_path = get_settings_path()
+    try:
+        with open(settings_path, 'w', encoding='utf-8') as f:
+            json.dump(settings, f, indent=2)
+        logging.info(f"Settings saved to {settings_path}")
+        return True
+    except Exception as e:
+        logging.error(f"Failed to save settings: {e}")
+        return False
+
+
+def is_first_run() -> bool:
+    """
+    Check if this is the first time the app is running.
+
+    Returns:
+        True if first run, False otherwise
+    """
+    settings = load_settings()
+    return settings.get("first_run", True)
+
+
+# ============================================================================
+# STARTUP SHORTCUT MANAGEMENT
+# ============================================================================
+
+def get_startup_folder() -> str:
+    """
+    Get the Windows Startup folder path for current user.
+
+    Returns:
+        Absolute path to user's Startup folder
+    """
+    appdata = os.getenv('APPDATA', os.path.expanduser('~'))
+    startup_folder = os.path.join(
+        appdata,
+        'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup'
+    )
+    return startup_folder
+
+
+def get_exe_path() -> str:
+    """
+    Get the full path to the current executable or script.
+
+    Returns:
+        Absolute path to speech-to-text-cli.exe or main.pyw
+    """
+    if getattr(sys, 'frozen', False):
+        # Running as compiled executable (PyInstaller)
+        return sys.executable
+    else:
+        # Running from Python source
+        return os.path.abspath(__file__)
+
+
+def get_shortcut_path() -> str:
+    """
+    Get the full path to the startup shortcut file.
+
+    Returns:
+        Absolute path to STT-CLI.lnk in Startup folder
+    """
+    return os.path.join(get_startup_folder(), 'STT-CLI.lnk')
+
+
+def create_startup_shortcut() -> bool:
+    """
+    Create a shortcut in the Windows Startup folder.
+    Uses Windows Script Host (WScript.Shell) COM interface.
+
+    Returns:
+        True if successful, False otherwise
+    """
+    try:
+        shortcut_path = get_shortcut_path()
+        target_path = get_exe_path()
+
+        # Create WScript.Shell COM object
+        shell = win32com.client.Dispatch("WScript.Shell")
+        shortcut = shell.CreateShortcut(shortcut_path)
+
+        # Configure shortcut properties
+        shortcut.TargetPath = target_path
+        shortcut.WorkingDirectory = os.path.dirname(target_path)
+        shortcut.Description = "STT-CLI - Speech-to-Text for Command Line"
+        shortcut.IconLocation = target_path  # Use exe's embedded icon
+
+        # Save the shortcut
+        shortcut.Save()
+
+        logging.info(f"Startup shortcut created: {shortcut_path}")
+        return True
+
+    except Exception as e:
+        logging.error(f"Failed to create startup shortcut: {e}")
+        return False
+
+
+def delete_startup_shortcut() -> bool:
+    """
+    Remove the shortcut from the Windows Startup folder.
+
+    Returns:
+        True if successful, False otherwise
+    """
+    try:
+        shortcut_path = get_shortcut_path()
+
+        if os.path.exists(shortcut_path):
+            os.remove(shortcut_path)
+            logging.info(f"Startup shortcut deleted: {shortcut_path}")
+        else:
+            logging.info("Startup shortcut does not exist (already deleted)")
+
+        return True
+
+    except Exception as e:
+        logging.error(f"Failed to delete startup shortcut: {e}")
+        return False
+
+
+def is_startup_enabled() -> bool:
+    """
+    Check if the startup shortcut exists.
+
+    Returns:
+        True if shortcut exists, False otherwise
+    """
+    shortcut_path = get_shortcut_path()
+    return os.path.exists(shortcut_path)
+
+
+# ============================================================================
+# RECORDING & SPEECH RECOGNITION
+# ============================================================================
+
 def recording_loop() -> None:
     """
     Main recording loop that continuously listens to microphone input
@@ -172,9 +374,70 @@ def recording_loop() -> None:
     logging.info("Recording loop ended")
 
 
+def toggle_auto_start(icon_param: Optional[pystray.Icon], item: pystray.MenuItem) -> None:
+    """
+    Toggle the auto-start functionality.
+    Called when user clicks "Start on Windows Boot" menu item.
+
+    Args:
+        icon_param: System tray icon (passed by pystray menu callback)
+        item: The menu item that was clicked
+    """
+    global icon
+
+    current_state = is_startup_enabled()
+
+    if current_state:
+        # Disable auto-start
+        success = delete_startup_shortcut()
+        if success:
+            logging.info("Auto-start disabled by user")
+            if icon and NOTIFICATION_ENABLED:
+                icon.notify(
+                    title="Auto-Start Disabled",
+                    message="STT-CLI will no longer start automatically"
+                )
+            # Update settings
+            settings = load_settings()
+            settings["auto_start"] = False
+            save_settings(settings)
+        else:
+            logging.error("Failed to disable auto-start")
+            if icon and NOTIFICATION_ENABLED:
+                icon.notify(
+                    title="Auto-Start Error",
+                    message="Failed to disable auto-start. Check logs for details."
+                )
+    else:
+        # Enable auto-start
+        success = create_startup_shortcut()
+        if success:
+            logging.info("Auto-start enabled by user")
+            if icon and NOTIFICATION_ENABLED:
+                icon.notify(
+                    title="Auto-Start Enabled",
+                    message="STT-CLI will now start automatically when Windows boots"
+                )
+            # Update settings
+            settings = load_settings()
+            settings["auto_start"] = True
+            save_settings(settings)
+        else:
+            logging.error("Failed to enable auto-start")
+            if icon and NOTIFICATION_ENABLED:
+                icon.notify(
+                    title="Auto-Start Error",
+                    message="Failed to enable auto-start. Check permissions."
+                )
+
+    # Update menu to reflect new state
+    if icon:
+        icon.update_menu()
+
+
 def setup_tray() -> None:
     """
-    Initialize and run the system tray icon with menu.
+    Initialize and run the system tray icon with enhanced menu.
     Runs in a separate daemon thread.
     """
     global icon
@@ -183,7 +446,17 @@ def setup_tray() -> None:
         logging.error("Cannot setup tray: idle icon not loaded")
         return
 
-    menu = pystray.Menu(pystray.MenuItem("Quit", quit_program))
+    # Create menu with checkable auto-start item
+    menu = pystray.Menu(
+        pystray.MenuItem(
+            "Start on Windows Boot",
+            toggle_auto_start,
+            checked=lambda item: is_startup_enabled()  # Dynamic state check
+        ),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem("Quit", quit_program)
+    )
+
     icon = pystray.Icon("speech-to-text-cli", idle_icon_image, "Speech-to-Text CLI", menu)
     icon.run()
 
@@ -328,6 +601,20 @@ def on_release(key: Key) -> Optional[bool]:
         # Don't let exception kill the keyboard listener
 
 
+def show_welcome_notification() -> None:
+    """
+    Show first-run welcome notification to help new users get started.
+    Called 2 seconds after app launch to ensure tray icon is ready.
+    """
+    global icon
+    if icon and NOTIFICATION_ENABLED:
+        icon.notify(
+            title="STT-CLI is Running!",
+            message="Double-tap Left Alt to start recording. Right-click tray icon for settings."
+        )
+        logging.info("First-run welcome notification shown")
+
+
 def main() -> None:
     """
     Application entry point.
@@ -380,6 +667,19 @@ def main() -> None:
     listener.start()
 
     logging.info("All threads started, entering main loop")
+
+    # Check for first run and show welcome notification
+    if is_first_run():
+        logging.info("First run detected, will show welcome notification")
+        # Update settings to mark first run complete
+        settings = load_settings()
+        settings["first_run"] = False
+        save_settings(settings)
+
+        # Schedule welcome notification after 2 seconds to ensure tray icon is ready
+        welcome_timer = threading.Timer(2.0, show_welcome_notification)
+        welcome_timer.daemon = True
+        welcome_timer.start()
 
     # Keep the main thread alive
     # This prevents the process from exiting while daemon threads run

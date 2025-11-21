@@ -86,12 +86,45 @@ winget upgrade Mantej-Singh.STT-CLI
 winget uninstall Mantej-Singh.STT-CLI
 ```
 
+## 🚀 First Time Setup (After Winget Installation)
+
+After installing via winget, you need to start the application manually the first time:
+
+### Step 1: Launch the Application
+```bash
+# Open Windows Terminal, PowerShell, or CMD and run:
+speech-to-text-cli.exe
+```
+
+The system tray icon will appear, and you'll see a welcome notification confirming the app is running.
+
+### Step 2: Enable Auto-Start (Optional but Recommended)
+To make STT-CLI start automatically when Windows boots:
+
+1. **Right-click** the system tray icon
+2. Click **"Start on Windows Boot"**
+3. A checkmark (✓) will appear next to it
+4. You'll see a confirmation notification
+
+That's it! STT-CLI will now start automatically every time you log in to Windows.
+
+### Step 3: Start Using It
+1. Open any CLI window (Windows Terminal, PowerShell, CMD)
+2. **Double-tap Left Alt** to start recording
+3. Speak into your microphone
+4. Your words appear as text in the CLI!
+5. **Double-tap Left Alt** again to stop recording
+
+**Tip:** The system tray icon changes when you're recording to give you visual feedback.
+
+---
+
 ### Method 2: Direct Download
 
 Alternatively, download the pre-compiled executable (`.exe`) from the [GitHub Releases](https://github.com/Mantej-Singh/stt-cli/releases/latest). Simply download the file and run it.
 
 #### System Tray Icon
-![look for this](screens/sys_tray.png)
+![look for this](screens/sys_tray2.png)
 
 ### Running from Source
 
@@ -181,6 +214,32 @@ This project uses the `SpeechRecognition` library, which in turn uses the Google
 ---
 
 ## 🎉 Changelog
+
+### v1.4.0 (November 21, 2025) - Auto-Start & Enhanced User Experience
+
+**🎯 Major New Features:**
+- ✨ **Auto-Start on Windows Boot** - Right-click system tray icon to enable/disable automatic startup
+- 🎈 **First-Run Welcome Notification** - Friendly greeting when you launch STT-CLI for the first time
+- ✅ **Checkable Menu Items** - Visual feedback in tray menu shows auto-start status
+- 💾 **Settings Persistence** - Your preferences are remembered across sessions
+
+**🔧 Technical Improvements:**
+- Settings stored in `%APPDATA%\stt-cli\settings.json` for better persistence
+- Windows Startup shortcut management using pywin32 COM interface
+- Enhanced error handling for permission issues
+- Better first-run experience with guided setup
+
+#### Screenshots 
+![look for this](screens/sys_tray2.png)
+---
+![look for this](screens/on_startup.png)
+
+**Why This Matters:**
+No more manually starting the app every time you boot Windows! Set it once, forget it forever. Perfect for power users who want STT-CLI ready the moment they log in. Plus, the welcome notification helps new users get started faster.
+
+**Upgrade Note:** If you installed via winget, run: `winget upgrade Mantej-Singh.STT-CLI`
+
+---
 
 ### v1.3.1 (October 30, 2025) - Winget Readiness
 

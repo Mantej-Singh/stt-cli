@@ -1,13 +1,13 @@
 @echo off
 REM ====================================================
 REM STT-CLI Build Script
-REM Version: 1.3.1
+REM Version: 1.4.0
 REM Author: Mantej Singh Dhanjal
 REM ====================================================
 
 echo.
 echo ====================================================
-echo   Building STT-CLI v1.3.1
+echo   Building STT-CLI v1.4.0
 echo ====================================================
 echo.
 
@@ -50,10 +50,11 @@ echo   Output: dist\speech-to-text-cli.exe
 echo.
 echo   Next steps:
 echo   1. Test the executable: dist\speech-to-text-cli.exe
-echo   2. Test version flag: dist\speech-to-text-cli.exe --version
-echo   3. Test help flag: dist\speech-to-text-cli.exe --help
+echo   2. Test version flag: Check system tray icon (GUI app)
+echo   3. Right-click tray icon to test "Start on Windows Boot"
 echo   4. Push to GitHub
-echo   5. Create release v1.3.1
+echo   5. Create release v1.4.0
+echo   6. Submit to Winget using YamlCreate.ps1
 echo.
 
 pause
