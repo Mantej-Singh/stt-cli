@@ -216,10 +216,9 @@ Prevents accidental typing of sensitive transcriptions into browsers, text edito
 ## Component Diagram
 
 <div align="center">
-  <img src="screens/STT-CLI-Architecture.drawio.png" alt="STT-CLI Architecture Diagram" width="800" />
+  <img src="../screens/STT-CLI-Architecture.drawio.png" alt="STT-CLI Architecture Diagram" width="800" />
   <p><i>Visual flow diagram showing component interactions and data flow</i></p>
 </div>
-
 
 See [STT-CLI-Architecture.drawio](./STT-CLI-Architecture.drawio) for the editable draw.io source file.
 
