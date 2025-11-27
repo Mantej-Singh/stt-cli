@@ -5,3 +5,5 @@ pystray
 Pillow
 psutil
 pywin32
+faster-whisper
+av

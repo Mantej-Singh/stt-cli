@@ -1,13 +1,14 @@
 @echo off
 REM ====================================================
 REM STT-CLI Build Script
-REM Version: 1.4.0
+REM Version: 2.0.0
 REM Author: Mantej Singh Dhanjal
+REM Description: Hybrid Speech-to-Text with Whisper + Google
 REM ====================================================
 
 echo.
 echo ====================================================
-echo   Building STT-CLI v1.4.0
+echo   Building STT-CLI v2.0.0 with Whisper Integration
 echo ====================================================
 echo.
 
@@ -17,10 +18,11 @@ if exist build rmdir /s /q build
 if exist dist rmdir /s /q dist
 echo       Done!
 
-REM Build with PyInstaller
+REM Build with PyInstaller (includes Whisper dependencies)
 echo.
 echo [2/4] Building executable with PyInstaller...
-python -m PyInstaller --onefile --name "speech-to-text-cli" --icon "stt-cli2.ico" --noconsole --add-data "stt-cli2.ico;." --add-data "stt-cli2.png;." --clean main.pyw
+echo       Note: This includes faster-whisper, av, numpy, ctranslate2
+python -m PyInstaller --onefile --name "speech-to-text-cli" --icon "stt-cli2.ico" --noconsole --add-data "stt-cli2.ico;." --add-data "stt-cli2.png;." --hidden-import=av --hidden-import=faster_whisper --hidden-import=numpy --hidden-import=ctranslate2 --clean main.pyw
 
 if errorlevel 1 (
     echo.
@@ -48,13 +50,18 @@ echo ====================================================
 echo.
 echo   Output: dist\speech-to-text-cli.exe
 echo.
+echo   COPY THE SHA256 HASH ABOVE FOR WINGET MANIFEST!
+echo.
 echo   Next steps:
 echo   1. Test the executable: dist\speech-to-text-cli.exe
-echo   2. Test version flag: Check system tray icon (GUI app)
-echo   3. Right-click tray icon to test "Start on Windows Boot"
-echo   4. Push to GitHub
-echo   5. Create release v1.4.0
-echo   6. Submit to Winget using YamlCreate.ps1
+echo   2. Test Whisper mode (Engine menu in tray)
+echo   3. Test About menu (shows version info)
+echo   4. Copy SHA256 hash to winget manifests
+echo   5. Push to GitHub
+echo   6. Create release v2.0.0
+echo   7. Submit to Winget using updated manifests
+echo.
+echo   Expected size: ~150MB (includes Whisper libraries)
 echo.
 
 pause

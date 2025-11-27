@@ -1,11 +1,12 @@
 # ====================================================
 # STT-CLI
-# Version: 1.4.0
-# Build Date: November 21, 2025
+# Version: 2.0.0-beta
+# Build Date: November 26, 2025
 # Author: Mantej Singh Dhanjal
+# Description: Hybrid Speech-to-Text with Whisper + Google
 # ====================================================
 
-__version__ = "1.4.0"
+__version__ = "2.0.0-beta"
 
 import speech_recognition as sr
 from pynput import keyboard
@@ -20,9 +21,23 @@ import win32process
 import psutil
 from PIL import Image
 import pystray
-from typing import Optional
+from typing import Optional, Literal, TYPE_CHECKING
 import json
 import win32com.client
+import io
+import numpy as np
+
+# NEW: Whisper integration imports
+if TYPE_CHECKING:
+    from faster_whisper import WhisperModel
+
+try:
+    from faster_whisper import WhisperModel
+    WHISPER_AVAILABLE = True
+except ImportError:
+    WHISPER_AVAILABLE = False
+    WhisperModel = None  # Define as None for runtime
+    logging.warning("faster-whisper not installed. Only Google Web Speech API will be available.")
 
 # --- Logging Configuration ---
 # Create log directory in Windows TEMP folder to avoid permission issues
@@ -60,6 +75,12 @@ last_press_time: float = 0
 last_toggle_time: float = 0  # Track when last toggle occurred (for cooldown)
 recording_thread: Optional[threading.Thread] = None
 icon: Optional[pystray.Icon] = None
+
+# --- NEW: Whisper Integration State ---
+STTEngineType = Literal["whisper", "google", "auto"]
+current_engine: STTEngineType = "whisper"  # Default to Whisper (offline-first)
+whisper_model: Optional["WhisperModel"] = None  # String literal for type hint
+whisper_model_lock: threading.Lock = threading.Lock()  # Protect model loading
 
 
 def resource_path(relative_path: str) -> str:
@@ -122,6 +143,140 @@ def is_cli_window(hwnd: int) -> bool:
 
 
 # ============================================================================
+# WHISPER INTEGRATION
+# ============================================================================
+
+def get_whisper_model() -> Optional["WhisperModel"]:
+    """
+    Lazy-load Whisper model on first use.
+    Uses tiny model with INT8 CPU optimization for maximum speed.
+    Thread-safe with lock to prevent multiple simultaneous loads.
+
+    Returns:
+        WhisperModel instance, or None if Whisper is not available
+    """
+    global whisper_model
+
+    if not WHISPER_AVAILABLE:
+        return None
+
+    if whisper_model is None:
+        with whisper_model_lock:
+            # Double-check after acquiring lock
+            if whisper_model is None:
+                try:
+                    logging.info("Loading Whisper tiny model (first use, ~5-10s delay)...")
+
+                    # Store models in AppData for persistence
+                    model_cache = os.path.join(os.getenv('APPDATA', '.'), 'stt-cli', 'models')
+                    os.makedirs(model_cache, exist_ok=True)
+
+                    whisper_model = WhisperModel(
+                        "tiny",  # 39M parameters, ~70MB download
+                        device="cpu",
+                        compute_type="int8",  # Fastest CPU inference with quantization
+                        download_root=model_cache,
+                        num_workers=1  # Single worker for lower memory usage
+                    )
+
+                    logging.info("Whisper model loaded successfully")
+
+                except Exception as e:
+                    logging.error(f"Failed to load Whisper model: {e}")
+                    return None
+
+    return whisper_model
+
+
+def has_internet() -> bool:
+    """
+    Quick internet connectivity check.
+    Tries to connect to Google DNS (8.8.8.8:53) with 2-second timeout.
+
+    Returns:
+        True if internet is available, False otherwise
+    """
+    try:
+        import socket
+        socket.create_connection(("8.8.8.8", 53), timeout=2)
+        return True
+    except OSError:
+        return False
+
+
+def transcribe_with_whisper(audio: sr.AudioData) -> str:
+    """
+    Transcribe audio using Whisper model.
+    Converts SpeechRecognition audio format to numpy array for Whisper.
+
+    Speed optimizations:
+    - beam_size=1: Greedy decoding (no beam search)
+    - temperature=0.0: Deterministic output
+    - language="en": Skip auto-detection
+    - INT8 model: ~3x faster inference
+
+    Args:
+        audio: SpeechRecognition AudioData object
+
+    Returns:
+        Transcribed text, or empty string on error
+    """
+    try:
+        model = get_whisper_model()
+        if model is None:
+            logging.error("Whisper model not available")
+            return ""
+
+        # Convert audio to WAV format (16-bit PCM)
+        wav_data = audio.get_wav_data(
+            convert_rate=16000,  # Whisper expects 16kHz
+            convert_width=2       # 16-bit audio
+        )
+
+        # Convert bytes to numpy array
+        audio_array = np.frombuffer(wav_data, dtype=np.int16).astype(np.float32) / 32768.0
+
+        # Transcribe with speed-optimized settings
+        segments, info = model.transcribe(
+            audio_array,
+            language="en",       # Force English (remove this line for auto-detect)
+            beam_size=1,         # Greedy search (fastest)
+            best_of=1,           # No sampling (fastest)
+            temperature=0.0,     # Deterministic (fastest)
+            vad_filter=False,    # Disable VAD (we handle silence detection elsewhere)
+            word_timestamps=False # Disable word timestamps (faster)
+        )
+
+        # Collect transcription text from segments
+        text = " ".join(segment.text for segment in segments).strip()
+
+        return text
+
+    except Exception as e:
+        logging.error(f"Whisper transcription error: {e}", exc_info=True)
+        return ""
+
+
+def get_current_engine() -> STTEngineType:
+    """
+    Determine which STT engine to use based on settings and connectivity.
+
+    Returns:
+        "whisper" or "google" (never "auto" - auto is resolved here)
+    """
+    global current_engine
+
+    if current_engine == "auto":
+        # Auto-detect: prefer Google if online, fallback to Whisper
+        if has_internet():
+            return "google"
+        else:
+            return "whisper" if WHISPER_AVAILABLE else "google"
+
+    return current_engine
+
+
+# ============================================================================
 # SETTINGS PERSISTENCE
 # ============================================================================
 
@@ -150,6 +305,8 @@ def load_settings() -> dict:
     default_settings = {
         "auto_start": False,
         "first_run": True,
+        "stt_engine": "whisper",  # NEW: "whisper" (offline-first), "google", or "auto"
+        "whisper_model": "tiny",  # NEW: For future use (tiny, base, small)
         "version": __version__
     }
 
@@ -326,7 +483,7 @@ def recording_loop() -> None:
     Main recording loop that continuously listens to microphone input
     and transcribes speech to the active CLI window.
 
-    Uses Google Web Speech API via SpeechRecognition library.
+    NEW: Hybrid engine support - uses Whisper or Google based on settings.
     Runs in a separate daemon thread.
     """
     global recognizer, microphone
@@ -346,11 +503,27 @@ def recording_loop() -> None:
     with microphone as source:
         while recording_event.is_set():
             try:
+                # Listen for audio (timeout=1 to allow quick interruption)
                 audio = recognizer.listen(source, timeout=1)
-                transcription = recognizer.recognize_google(audio)
+
+                # Determine which engine to use
+                engine = get_current_engine()
+
+                # Transcribe based on selected engine
+                transcription = ""
+                if engine == "whisper":
+                    transcription = transcribe_with_whisper(audio)
+                else:  # "google"
+                    try:
+                        transcription = recognizer.recognize_google(audio)
+                    except sr.RequestError as e:
+                        # Google API failed - fallback to Whisper if available
+                        logging.warning(f"Google API error, falling back to Whisper: {e}")
+                        if WHISPER_AVAILABLE:
+                            transcription = transcribe_with_whisper(audio)
 
                 if transcription:
-                    logging.debug(f"Transcribed: {transcription}")
+                    logging.debug(f"[{engine.upper()}] Transcribed: {transcription}")
 
                     # Only type into CLI windows for security
                     hwnd = win32gui.GetForegroundWindow()
@@ -367,11 +540,49 @@ def recording_loop() -> None:
                 pass
             except sr.RequestError as e:
                 logging.error(f"Google Speech API error: {e}")
+                # Note: Fallback to Whisper is handled in the try block above
             except Exception as e:
-                logging.error(f"Unexpected error in recording loop: {e}")
+                logging.error(f"Unexpected error in recording loop: {e}", exc_info=True)
                 # Don't break loop on unexpected errors, let it continue
 
     logging.info("Recording loop ended")
+
+
+def set_engine(engine: STTEngineType) -> None:
+    """
+    Change the speech-to-text engine and save to settings.
+    Called when user selects an engine from the tray menu.
+
+    Args:
+        engine: The engine to use ("whisper", "google", or "auto")
+    """
+    global current_engine, icon
+
+    current_engine = engine
+
+    # Save to settings
+    settings = load_settings()
+    settings["stt_engine"] = engine
+    save_settings(settings)
+
+    logging.info(f"STT engine changed to: {engine}")
+
+    # Show notification
+    engine_names = {
+        "whisper": "Whisper (Offline)",
+        "google": "Google (Online)",
+        "auto": "Auto-Detect (Smart)"
+    }
+
+    if icon and NOTIFICATION_ENABLED:
+        icon.notify(
+            title="Engine Changed",
+            message=f"Now using: {engine_names.get(engine, engine)}"
+        )
+
+    # Update menu to reflect new state
+    if icon:
+        icon.update_menu()
 
 
 def toggle_auto_start(icon_param: Optional[pystray.Icon], item: pystray.MenuItem) -> None:
@@ -438,7 +649,7 @@ def toggle_auto_start(icon_param: Optional[pystray.Icon], item: pystray.MenuItem
 def setup_tray() -> None:
     """
     Initialize and run the system tray icon with enhanced menu.
-    Runs in a separate daemon thread.
+    Runs in a separate daemon thread with engine selection submenu.
     """
     global icon
 
@@ -446,14 +657,41 @@ def setup_tray() -> None:
         logging.error("Cannot setup tray: idle icon not loaded")
         return
 
-    # Create menu with checkable auto-start item
+    # UPDATED [2025-11-26]: Added nested submenu for engine selection
+    # Create engine selection submenu with radio-button style checkmarks
+    engine_menu = pystray.Menu(
+        pystray.MenuItem(
+            "Auto-Detect (Smart)",
+            lambda: set_engine("auto"),
+            checked=lambda item: current_engine == "auto"
+        ),
+        pystray.MenuItem(
+            "Whisper (Offline)",
+            lambda: set_engine("whisper"),
+            checked=lambda item: current_engine == "whisper"
+        ),
+        pystray.MenuItem(
+            "Google (Online)",
+            lambda: set_engine("google"),
+            checked=lambda item: current_engine == "google"
+        )
+    )
+
+    # UPDATED [2025-11-26]: Added About menu item
+    # Create main menu with engine submenu and about section
     menu = pystray.Menu(
+        pystray.MenuItem(
+            "🎙️ Engine",
+            engine_menu  # Nested submenu
+        ),
+        pystray.Menu.SEPARATOR,
         pystray.MenuItem(
             "Start on Windows Boot",
             toggle_auto_start,
             checked=lambda item: is_startup_enabled()  # Dynamic state check
         ),
         pystray.Menu.SEPARATOR,
+        pystray.MenuItem("About", show_about),
         pystray.MenuItem("Quit", quit_program)
     )
 
@@ -497,17 +735,56 @@ def toggle_recording() -> None:
             if icon and listening_icon_image:
                 icon.icon = listening_icon_image
 
-            # Show notification
+            # Show notification with engine info
             if icon and NOTIFICATION_ENABLED:
+                engine_name = {
+                    "whisper": "Whisper (Offline)",
+                    "google": "Google (Online)",
+                    "auto": "Auto-Detect"
+                }.get(current_engine, current_engine)
+
                 icon.notify(
                     title="Recording Started",
-                    message="Double-tap Left Alt to stop recording"
+                    message=f"Using: {engine_name}\nDouble-tap Left Alt to stop"
                 )
 
             # Start new recording thread if needed
             if recording_thread is None or not recording_thread.is_alive():
                 recording_thread = threading.Thread(target=recording_loop, daemon=True)
                 recording_thread.start()
+
+
+def show_about(icon_param: Optional[pystray.Icon] = None) -> None:
+    """
+    Show About information in a notification.
+    Displays version, author, and engine status.
+
+    Args:
+        icon_param: System tray icon (passed by pystray menu callback)
+    """
+    global icon
+
+    # Get current engine info
+    engine_name = {
+        "whisper": "Whisper (Offline)",
+        "google": "Google (Online)",
+        "auto": "Auto-Detect"
+    }.get(current_engine, current_engine)
+
+    # Check Whisper availability
+    whisper_status = "Available" if WHISPER_AVAILABLE else "Not Installed"
+
+    if icon:
+        icon.notify(
+            title=f"STT-CLI v{__version__}",
+            message=f"Speech-to-Text CLI\n"
+                   f"Author: Mantej Singh Dhanjal\n"
+                   f"\nCurrent Engine: {engine_name}\n"
+                   f"Whisper: {whisper_status}\n"
+                   f"\nGitHub: github.com/Mantej-Singh/stt-cli"
+        )
+
+    logging.info("Showed About notification")
 
 
 def quit_program(icon_param: Optional[pystray.Icon] = None) -> None:
@@ -620,28 +897,33 @@ def main() -> None:
     Application entry point.
     Initializes all resources and starts background threads.
     """
-    global icon
+    global icon, current_engine
 
     # Handle command-line arguments
     if len(sys.argv) > 1:
         arg = sys.argv[1].lower()
         if arg in ["--version", "-v"]:
             print(f"STT-CLI v{__version__}")
-            print("Speech-to-Text CLI for Windows")
+            print("Hybrid Speech-to-Text CLI for Windows")
+            print("Engines: Whisper (offline) + Google Web Speech API")
             print("Author: Mantej Singh Dhanjal")
             print("License: MIT")
             print("GitHub: https://github.com/Mantej-Singh/stt-cli")
             sys.exit(0)
         elif arg in ["--help", "-h"]:
-            print(f"STT-CLI v{__version__} - Speech-to-Text CLI for Windows")
+            print(f"STT-CLI v{__version__} - Hybrid Speech-to-Text CLI for Windows")
             print("\nUsage:")
             print("  speech-to-text-cli.exe        Start the application")
             print("  speech-to-text-cli.exe -v     Show version information")
             print("  speech-to-text-cli.exe -h     Show this help message")
             print("\nHotkey:")
             print("  Double-tap Left Alt           Toggle recording on/off")
+            print("\nEngines:")
+            print("  Whisper (offline) [default]   100% offline, works anywhere")
+            print("  Google (online)               Cloud-based, requires internet")
+            print("  Auto-Detect                   Smart selection based on connectivity")
             print("\nThe application runs in the system tray.")
-            print("Right-click the tray icon to quit.")
+            print("Right-click the tray icon to change engine or quit.")
             print(f"\nLogs are saved to: %TEMP%\\stt-cli\\app.log")
             sys.exit(0)
         else:
@@ -650,6 +932,17 @@ def main() -> None:
             sys.exit(1)
 
     logging.info(f"=== STT-CLI v{__version__} Starting ===")
+
+    # Load settings and initialize engine preference
+    settings = load_settings()
+    current_engine = settings.get("stt_engine", "whisper")  # Default to Whisper
+    logging.info(f"STT Engine preference: {current_engine}")
+
+    # Check Whisper availability
+    if WHISPER_AVAILABLE:
+        logging.info("faster-whisper is available (offline mode supported)")
+    else:
+        logging.warning("faster-whisper not installed - only Google Web Speech API available")
 
     # Load icon resources once at startup
     load_icon_resources()
@@ -672,7 +965,6 @@ def main() -> None:
     if is_first_run():
         logging.info("First run detected, will show welcome notification")
         # Update settings to mark first run complete
-        settings = load_settings()
         settings["first_run"] = False
         save_settings(settings)
 
