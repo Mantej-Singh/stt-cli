@@ -21,7 +21,10 @@ I primarily use this with **Claude Code** and **Gemini CLI**, where voice input 
 
 ## The Problem: Win+H Disabled on Corporate Laptops
 
-Many corporate and enterprise Windows laptops have the built-in voice typing feature (Win+H) disabled by IT policies and group restrictions. When you try to use it, you'll see this frustrating message:
+> [!IMPORTANT]
+> Many corporate and enterprise Windows laptops have the built-in voice typing feature (Win+H) disabled by IT policies and group restrictions. This is a widespread issue affecting millions of Windows users in enterprise environments.
+
+When you try to use it, you'll see this frustrating message:
 
 <div align="center">
   <img src="screens/Win+H_disabled.png" alt="Windows Voice Typing Disabled by Organization" width="400" />
@@ -52,6 +55,20 @@ The application runs as a system tray icon, works with any CLI window, and bypas
 - **Background Operation:** The application runs in the background without a visible window.
 - **System Tray Icon:** A system tray icon indicates when the application is running and when it is actively listening.
 - **CLI-Focused:** The transcribed text is typed directly into the active command-line window (e.g. Windows Terminal, PowerShell, Claude Code).
+- **Offline Speech Recognition:** Using OpenAI's Whisper "tiny" model (MIT licensed) for fully offline operation [available in v2.0+]
+
+## Architecture
+
+<div align="center">
+  <img src="screens/STT-CLI-Architecture.drawio.png" alt="STT-CLI Architecture" width="800" />
+  <p><i>System architecture overview showing hybrid speech-to-text engine and multi-threaded design. See <a href="/docs/ARCHITECTURE.md">detailed documentation</a> for technical deep dive.</i></p>
+</div>
+
+**Key Design Principles:**
+- **Hybrid Engine:** Auto-switches between Google (online) and Whisper (offline) based on connectivity
+- **Event-Driven:** Global hotkey triggers recording without blocking main thread
+- **Security-First:** Only types into CLI windows (cmd.exe, powershell.exe, WindowsTerminal.exe)
+- **Privacy-Focused:** Whisper mode keeps all audio processing local (never leaves your machine)
 
 ## Requirements
 
@@ -88,7 +105,8 @@ winget uninstall Mantej-Singh.STT-CLI
 
 ## 🚀 First Time Setup (After Winget Installation)
 
-After installing via winget, you need to start the application manually the first time:
+> [!IMPORTANT]
+> After installing via winget, you need to start the application manually the first time. Follow these three steps to get STT-CLI running.
 
 ### Step 1: Launch the Application
 ```bash
@@ -124,7 +142,7 @@ That's it! STT-CLI will now start automatically every time you log in to Windows
 Alternatively, download the pre-compiled executable (`.exe`) from the [GitHub Releases](https://github.com/Mantej-Singh/stt-cli/releases/latest). Simply download the file and run it.
 
 #### System Tray Icon
-![look for this](screens/sys_tray2.png)
+![look for this](screens/sys_tray3.png)
 
 ### Running from Source
 
@@ -142,8 +160,21 @@ If you prefer to run the application from the source code, you will need to have
     ```
 
 3.  **Run the application:**
+
+    **Option A: Using the batch launcher (Windows):**
+    ```bash
+    # Double-click run.bat or from command line:
+    run.bat
+    ```
+
+    **Option B: Direct Python command:**
     ```bash
     python main.pyw
+    ```
+
+    **Option C: Debug mode (shows console output):**
+    ```bash
+    run-debug.bat
     ```
 
 ## Usage
@@ -207,89 +238,48 @@ This is an initial release. Future updates will include:
 -   Configurable hotkeys.
 -   More visual indicators for recording status.
 
-## Speech-to-Text Library
+## Speech-to-Text Engines
 
-This project uses the `SpeechRecognition` library, which in turn uses the Google Web Speech API for transcription.
+**v2.0+:** This project supports **hybrid speech-to-text**:
 
----
+### Primary Engine: OpenAI Whisper (Offline) 🎯
+- **License:** MIT License (100% free for commercial use)
+- **Privacy:** Audio never leaves your machine
+- **Works offline:** No internet required
+- **Library:** `faster-whisper` (4x faster than vanilla Whisper)
+- **Model:** Tiny (39M parameters, ~70MB)
 
-## 🎉 Changelog
+> [!NOTE]
+> **Whisper Licensing:** OpenAI's Whisper model is released under the MIT License, which allows free commercial use, modification, and distribution. STT-CLI uses the `faster-whisper` implementation (also MIT licensed) for optimized performance. Audio processing happens entirely on your local machine - no data is sent to external servers.
 
-### v1.4.0 (November 21, 2025) - Auto-Start & Enhanced User Experience
+### Fallback Engine: Google Web Speech API (Online)
+- **License:** Free with usage limits
+- **Requires:** Internet connection
+- **Library:** `SpeechRecognition`
+- **Speed:** ~0.5s latency (faster than Whisper)
 
-**🎯 Major New Features:**
-- ✨ **Auto-Start on Windows Boot** - Right-click system tray icon to enable/disable automatic startup
-- 🎈 **First-Run Welcome Notification** - Friendly greeting when you launch STT-CLI for the first time
-- ✅ **Checkable Menu Items** - Visual feedback in tray menu shows auto-start status
-- 💾 **Settings Persistence** - Your preferences are remembered across sessions
-
-**🔧 Technical Improvements:**
-- Settings stored in `%APPDATA%\stt-cli\settings.json` for better persistence
-- Windows Startup shortcut management using pywin32 COM interface
-- Enhanced error handling for permission issues
-- Better first-run experience with guided setup
-
-#### Screenshots 
-![look for this](screens/sys_tray2.png)
----
-![look for this](screens/on_startup.png)
-
-**Why This Matters:**
-No more manually starting the app every time you boot Windows! Set it once, forget it forever. Perfect for power users who want STT-CLI ready the moment they log in. Plus, the welcome notification helps new users get started faster.
-
-**Upgrade Note:** If you installed via winget, run: `winget upgrade Mantej-Singh.STT-CLI`
+**Default:** Whisper (offline-first for maximum privacy & reliability)
 
 ---
 
-### v1.3.1 (October 30, 2025) - Winget Readiness
+## 🚀 What's New in v2.0.0
 
-**Enhancements for Package Manager Distribution:**
-- ✅ Added `--version` flag to display version information
-- ✅ Added `--help` flag to show usage instructions
-- ✅ Added programmatic `__version__` variable for better version management
-- 📖 Documented log file location in README (`%TEMP%\stt-cli\app.log`)
-- 🎯 Prepared for Windows Package Manager (Winget) submission
+**Hybrid Speech-to-Text with Whisper Integration** (November 26, 2025)
 
-**Why This Matters:**
-This release makes STT-CLI ready for distribution via Winget (Windows Package Manager). Users will soon be able to install with a simple `winget install Mantej-Singh.STT-CLI` command!
+- 🎙️ **Offline Speech Recognition** - OpenAI Whisper "tiny" model (MIT licensed) for fully offline operation
+- 🔄 **Smart Engine Switching** - Auto-detect between Google (online) and Whisper (offline) based on connectivity
+- ⚡ **4x Faster Performance** - Using faster-whisper with CTranslate2 optimization and INT8 quantization
+- 🔒 **Privacy-First Design** - Audio never leaves your machine in Whisper mode (100% local processing)
 
----
+> [!NOTE]
+> **Licensing Note:** This application uses OpenAI's Whisper model under the MIT License, which permits free commercial use, modification, and distribution. The `faster-whisper` implementation is also MIT licensed. All audio processing happens locally on your device.
 
-### v1.3 (October 29, 2025) - Balloon Notifications
+**📚 Documentation:**
+- [`/docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) - System architecture overview
+- [`/docs/WHISPER_MODEL.md`](docs/WHISPER_MODEL.md) - Model download, caching, and lifecycle
+- [`/docs/THREADING.md`](docs/THREADING.md) - Threading model and synchronization
 
-**New Feature: Visual Feedback**
-
-<div align="center">
-  <img src="screens/Recording-Started.png" alt="Recording Started Notification" width="400" />
-  <p><i>Windows balloon notification when recording starts</i></p>
-</div>
-
-<div align="center">
-  <img src="screens/Recording-Stopped.png" alt="Recording Stopped Notification" width="400" />
-  <p><i>Windows balloon notification when recording stops</i></p>
-</div>
-
-STT-CLI now shows Windows balloon notifications when you start or stop recording! You no longer need to watch the system tray icon - you'll get clear visual confirmation that your hotkey press was detected.
-
-**What's New:**
-- 🔔 **Balloon notifications** appear when recording starts/stops
-- ✅ **Start message** reminds you how to stop recording ("Double-tap Left Alt to stop recording")
-- ✅ **Stop message** confirms recording has ended
-- 🎨 Professional Windows notification system integration
-- ⚙️ Configurable - can be disabled in code if needed
-
-**Bug Fixes:**
-- Fixed multi-toggle issue where rapid Alt key presses would cause recording to flash on/off
-- Added 800ms cooldown period after toggle to prevent accidental multi-toggles
-- Added exception handling to keyboard callbacks to prevent listener crashes
-- Recording now reliably stops when you want it to!
-
-**Under the Hood:**
-- Improved thread safety with proper event synchronization
-- Better error handling and logging
-- Resource optimization (icons cached at startup)
-- Type hints for better code maintainability
-- Version: 1.0 → 1.3
+**Upgrade:** `winget upgrade Mantej-Singh.STT-CLI` | [Full Changelog](/docs/changelog.md)
 
 ---
 

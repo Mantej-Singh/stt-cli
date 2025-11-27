@@ -1,0 +1,275 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="STT-CLI-v2-Architecture" id="stt-cli-architecture-v2">
+    <mxGraphModel dx="2000" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;h1 style=&quot;text-align: center;&quot;&gt;&lt;font style=&quot;font-size: 24px;&quot; face=&quot;Arial&quot;&gt;&lt;u&gt;STT-CLI v2.0: Hybrid Speech-to-Text Architecture&lt;/u&gt;&lt;/font&gt;&lt;/h1&gt;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="10" width="1100" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- User Interaction Layer -->
+        <mxCell id="user-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;shadow=1;dashed=1" parent="1" vertex="1">
+          <mxGeometry x="50" y="100" width="300" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="user-title" value="&lt;b&gt;USER INTERACTION&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" parent="1" vertex="1">
+          <mxGeometry x="50" y="110" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="user-hotkey" value="&lt;b&gt;Global Hotkey&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;Double-tap Left Alt&lt;br&gt;Start/Stop Recording&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;shadow=1;fontSize=11" parent="1" vertex="1">
+          <mxGeometry x="70" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="user-tray" value="&lt;b&gt;System Tray Menu&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;🎙️ Engine Selection&lt;br&gt;About, Quit&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;shadow=1;fontSize=11" parent="1" vertex="1">
+          <mxGeometry x="210" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- System Tray Layer -->
+        <mxCell id="tray-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;shadow=1;dashed=1" parent="1" vertex="1">
+          <mxGeometry x="400" y="100" width="280" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="tray-title" value="&lt;b&gt;SYSTEM TRAY (pystray)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;Thread: Daemon (tray_thread)&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=13" parent="1" vertex="1">
+          <mxGeometry x="400" y="110" width="280" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tray-icon" value="&lt;b&gt;Icon State&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;Idle: stt-cli2.ico&lt;br&gt;Listening: stt-cli2.png&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="420" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tray-menu" value="&lt;b&gt;Menu&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;🎙️ Engine ►&lt;br&gt;Start on Boot&lt;br&gt;About&lt;br&gt;Quit&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="420" y="240" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="tray-notify" value="&lt;b&gt;Notifications&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;Recording Start/Stop&lt;br&gt;Engine Changed&lt;br&gt;About Info&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="560" y="160" width="100" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Audio Capture Layer -->
+        <mxCell id="audio-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;shadow=1;dashed=1" parent="1" vertex="1">
+          <mxGeometry x="730" y="100" width="280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="audio-title" value="&lt;b&gt;AUDIO CAPTURE&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;Thread: Daemon (recording_thread)&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=13" parent="1" vertex="1">
+          <mxGeometry x="730" y="110" width="280" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="audio-mic" value="&lt;b&gt;Microphone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;SpeechRecognition&lt;br&gt;PyAudio backend&lt;br&gt;Ambient noise adjust&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="750" y="160" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="audio-loop" value="&lt;b&gt;Recording Loop&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;Continuous listen&lt;br&gt;1s timeout&lt;br&gt;WAV conversion&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="880" y="160" width="110" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Transcription Engine Layer -->
+        <mxCell id="engine-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;shadow=1;dashed=1" parent="1" vertex="1">
+          <mxGeometry x="1050" y="100" width="600" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="engine-title" value="&lt;b&gt;TRANSCRIPTION ENGINES (Hybrid)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" parent="1" vertex="1">
+          <mxGeometry x="1050" y="110" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="whisper-engine" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1070" y="160" width="250" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="whisper-title" value="&lt;b&gt;WHISPER ENGINE (Offline)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=12;fillColor=#e1d5e7;" parent="1" vertex="1">
+          <mxGeometry x="1070" y="165" width="250" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="whisper-lib" value="&lt;b&gt;faster-whisper&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;Model: tiny (39M params)&lt;br&gt;Backend: CTranslate2&lt;br&gt;Quantization: INT8&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1090" y="200" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="whisper-perf" value="&lt;b&gt;Performance&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;Latency: 1-2s&lt;br&gt;Accuracy: Fair&lt;br&gt;Privacy: 100%&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1090" y="280" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="whisper-cache" value="&lt;b&gt;Model Cache&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;Location: %APPDATA%\stt-cli\models&lt;br&gt;Size: 75MB&lt;br&gt;Lazy Load: First use only&lt;br&gt;Memory: ~1.5GB RAM&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1200" y="200" width="110" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="whisper-opt" value="&lt;b&gt;Optimizations&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;beam_size=1 (greedy)&lt;br&gt;language=en (skip detect)&lt;br&gt;temperature=0 (deterministic)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1200" y="290" width="110" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="google-engine" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1370" y="160" width="250" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="google-title" value="&lt;b&gt;GOOGLE ENGINE (Online)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=12;fillColor=#dae8fc;" parent="1" vertex="1">
+          <mxGeometry x="1370" y="165" width="250" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="google-lib" value="&lt;b&gt;SpeechRecognition&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;API: Google Web Speech&lt;br&gt;Method: recognize_google()&lt;br&gt;Free tier with limits&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1390" y="200" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="google-perf" value="&lt;b&gt;Performance&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;Latency: 0.5s&lt;br&gt;Accuracy: Excellent&lt;br&gt;Requires: Internet&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1390" y="280" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="google-fallback" value="&lt;b&gt;Auto-Fallback&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;On RequestError:&lt;br&gt;→ Switch to Whisper&lt;br&gt;→ Log warning&lt;br&gt;→ Continue recording&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1500" y="200" width="110" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Output Layer -->
+        <mxCell id="output-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#666666;shadow=1;dashed=1" parent="1" vertex="1">
+          <mxGeometry x="400" y="440" width="600" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="output-title" value="&lt;b&gt;CLI WINDOW DETECTION &amp; OUTPUT&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=13" parent="1" vertex="1">
+          <mxGeometry x="400" y="450" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="output-detect" value="&lt;b&gt;Window Detection&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;win32gui.GetForegroundWindow()&lt;br&gt;win32process + psutil&lt;br&gt;Process name check&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#666666;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="420" y="490" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="output-whitelist" value="&lt;b&gt;CLI Whitelist&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;✅ cmd.exe&lt;br&gt;✅ powershell.exe&lt;br&gt;✅ WindowsTerminal.exe&lt;br&gt;✅ wt.exe&lt;br&gt;❌ All others (security)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#666666;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="590" y="490" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="output-type" value="&lt;b&gt;Keyboard Controller&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;pynput.keyboard.Controller&lt;br&gt;Type: transcription + space&lt;br&gt;Only if CLI active&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#666666;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="750" y="490" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- State Management -->
+        <mxCell id="state-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;shadow=1;dashed=1" parent="1" vertex="1">
+          <mxGeometry x="1050" y="440" width="600" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="state-title" value="&lt;b&gt;STATE MANAGEMENT &amp; SYNCHRONIZATION&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=13" parent="1" vertex="1">
+          <mxGeometry x="1050" y="450" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="state-event" value="&lt;b&gt;recording_event&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;threading.Event()&lt;br&gt;.set() / .clear()&lt;br&gt;Recording state signal&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1070" y="490" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="state-lock" value="&lt;b&gt;state_lock&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;threading.Lock()&lt;br&gt;Protect toggle_recording()&lt;br&gt;Prevent race conditions&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1210" y="490" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="state-whisper-lock" value="&lt;b&gt;whisper_model_lock&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;threading.Lock()&lt;br&gt;Double-checked locking&lt;br&gt;Lazy model load&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1350" y="490" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="state-settings" value="&lt;b&gt;Settings Persistence&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;%APPDATA%\stt-cli\settings.json&lt;br&gt;Engine: whisper/google/auto&lt;br&gt;Model: tiny/base/small&lt;br&gt;Auto-start: true/false&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1500" y="490" width="130" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows: User to Tray -->
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;endArrow=classic;endFill=1" parent="1" source="user-hotkey" target="tray-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;endArrow=classic;endFill=1" parent="1" source="user-tray" target="tray-box" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows: Tray to Audio -->
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;endArrow=classic;endFill=1" parent="1" source="tray-box" target="audio-box" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="680" y="190" as="sourcePoint" />
+            <mxPoint x="730" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow3-label" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;Start Recording&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="arrow3" vertex="1" connectable="0">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="-11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrows: Audio to Engines -->
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;endArrow=classic;endFill=1;dashed=1" parent="1" source="audio-loop" target="whisper-engine" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow4-label" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;Offline&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="arrow4" vertex="1" connectable="0">
+          <mxGeometry x="-0.2" y="2" relative="1" as="geometry">
+            <mxPoint x="8" y="-8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;endArrow=classic;endFill=1;dashed=1" parent="1" source="audio-loop" target="google-engine" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow5-label" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;Online&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="arrow5" vertex="1" connectable="0">
+          <mxGeometry x="-0.2" y="2" relative="1" as="geometry">
+            <mxPoint x="8" y="-8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrows: Engines to Output -->
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;endArrow=classic;endFill=1;strokeColor=#82b366" parent="1" source="whisper-engine" target="output-box" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1195" y="410" />
+              <mxPoint x="600" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow6-label" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;Transcription&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="arrow6" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" y="1" relative="1" as="geometry">
+            <mxPoint x="80" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;endArrow=classic;endFill=1;strokeColor=#6c8ebf" parent="1" source="google-engine" target="output-box" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1495" y="410" />
+              <mxPoint x="800" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow7-label" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;Transcription&lt;/b&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="arrow7" vertex="1" connectable="0">
+          <mxGeometry x="-0.3" y="1" relative="1" as="geometry">
+            <mxPoint x="80" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Threading Model -->
+        <mxCell id="thread-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;shadow=1;dashed=1" parent="1" vertex="1">
+          <mxGeometry x="50" y="680" width="950" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="thread-title" value="&lt;b&gt;THREADING MODEL&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" parent="1" vertex="1">
+          <mxGeometry x="50" y="690" width="950" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="thread-main" value="&lt;b&gt;Main Thread&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;while True: time.sleep(1)&lt;br&gt;Keeps app alive&lt;br&gt;Handles KeyboardInterrupt&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="70" y="730" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="thread-tray" value="&lt;b&gt;Tray Thread&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;daemon=True&lt;br&gt;icon.run() event loop&lt;br&gt;UI updates, menu clicks&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="240" y="730" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="thread-keyboard" value="&lt;b&gt;Keyboard Listener&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;pynput.keyboard.Listener&lt;br&gt;Global hotkey detection&lt;br&gt;Calls toggle_recording()&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="410" y="730" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="thread-recording" value="&lt;b&gt;Recording Thread&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;daemon=True (spawned)&lt;br&gt;recording_loop()&lt;br&gt;Audio + transcription&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="580" y="730" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="thread-sync" value="&lt;b&gt;Synchronization&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;recording_event: Start/stop signal&lt;br&gt;state_lock: Protect toggle&lt;br&gt;whisper_model_lock: Lazy load&lt;br&gt;&lt;b&gt;No deadlocks (lock hierarchy)&lt;/b&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="750" y="730" width="230" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Lifecycle Flow -->
+        <mxCell id="lifecycle-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#666666;shadow=1;dashed=1" parent="1" vertex="1">
+          <mxGeometry x="1050" y="680" width="600" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="lifecycle-title" value="&lt;b&gt;LIFECYCLE &amp; SHUTDOWN&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14" parent="1" vertex="1">
+          <mxGeometry x="1050" y="690" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lifecycle-startup" value="&lt;b&gt;Startup&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;1. Load icons&lt;br&gt;2. Spawn tray thread&lt;br&gt;3. Start keyboard listener&lt;br&gt;4. Main loop (keep alive)&lt;br&gt;⏱️ 200ms to ready&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1070" y="730" width="130" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lifecycle-recording" value="&lt;b&gt;Recording Lifecycle&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;Start: recording_event.set()&lt;br&gt;Loop: while is_set()&lt;br&gt;Stop: recording_event.clear()&lt;br&gt;Exit: Thread terminates (&lt;1s)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1220" y="730" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lifecycle-shutdown" value="&lt;b&gt;Shutdown (quit_program)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;1. recording_event.clear()&lt;br&gt;2. recording_thread.join(1s)&lt;br&gt;3. icon.stop()&lt;br&gt;4. os._exit(0) → Fast exit&lt;br&gt;⏱️ &lt;1 second total&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1380" y="730" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lifecycle-windows" value="&lt;b&gt;Windows Shutdown&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;OS terminates process&lt;br&gt;Memory released (Whisper)&lt;br&gt;Disk cache preserved&lt;br&gt;Auto-start: Works on reboot&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=9;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="1540" y="730" width="100" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Performance Stats -->
+        <mxCell id="perf-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="50" y="940" width="450" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="perf-title" value="&lt;b&gt;PERFORMANCE METRICS&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=13" parent="1" vertex="1">
+          <mxGeometry x="50" y="950" width="450" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="perf-table" value="&lt;table border=&quot;1&quot; style=&quot;font-size:8px;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;th&gt;Metric&lt;/th&gt;&lt;th&gt;Whisper&lt;/th&gt;&lt;th&gt;Google&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Latency&lt;/td&gt;&lt;td&gt;1-2s&lt;/td&gt;&lt;td&gt;0.5s&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Accuracy&lt;/td&gt;&lt;td&gt;Fair&lt;/td&gt;&lt;td&gt;Excellent&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;RAM (idle)&lt;/td&gt;&lt;td&gt;~80MB&lt;/td&gt;&lt;td&gt;~80MB&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;RAM (recording)&lt;/td&gt;&lt;td&gt;~1.5GB&lt;/td&gt;&lt;td&gt;~100MB&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;First Load&lt;/td&gt;&lt;td&gt;5-10s&lt;/td&gt;&lt;td&gt;Instant&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Model Size&lt;/td&gt;&lt;td&gt;75MB&lt;/td&gt;&lt;td&gt;N/A&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Internet&lt;/td&gt;&lt;td&gt;❌ Not required&lt;/td&gt;&lt;td&gt;✅ Required&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Privacy&lt;/td&gt;&lt;td&gt;100% Local&lt;/td&gt;&lt;td&gt;Cloud API&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="70" y="980" width="410" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;shadow=1" parent="1" vertex="1">
+          <mxGeometry x="550" y="940" width="1100" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="&lt;b&gt;LEGEND - STT-CLI v2.0 Architecture&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=13" parent="1" vertex="1">
+          <mxGeometry x="550" y="950" width="1100" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-text" value="&lt;div style=&quot;text-align: left;&quot;&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;v2.0 introduces hybrid speech-to-text:&lt;/b&gt; Offline (Whisper) + Online (Google) with user-selectable engines via system tray menu.&lt;br&gt;&lt;br&gt;&lt;b&gt;Key Components:&lt;/b&gt;&lt;br&gt;• System Tray: pystray daemon thread (icon, menu, notifications)&lt;br&gt;• Audio Capture: Recording thread (SpeechRecognition + PyAudio)&lt;br&gt;• Whisper Engine: faster-whisper with INT8 quantization (1-2s latency, 75MB model, offline)&lt;br&gt;• Google Engine: Web Speech API (0.5s latency, cloud-powered, excellent accuracy)&lt;br&gt;• CLI Detection: Win32 API window validation (cmd.exe, powershell.exe, WindowsTerminal.exe only)&lt;br&gt;&lt;br&gt;&lt;b&gt;Threading:&lt;/b&gt; 3 concurrent threads (main, tray, recording) with synchronization via threading.Event + threading.Lock&lt;br&gt;&lt;b&gt;Performance:&lt;/b&gt; Whisper ~1-2s (fair accuracy), Google ~0.5s (excellent accuracy), Auto-fallback on errors&lt;br&gt;&lt;b&gt;Storage:&lt;/b&gt; Model cache in %APPDATA%\stt-cli\models (75MB), Settings in %APPDATA%\stt-cli\settings.json&lt;br&gt;&lt;b&gt;Security:&lt;/b&gt; CLI-only output (prevents typing into browsers/editors), Whisper 100% local (privacy-focused)&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="570" y="980" width="1060" height="110" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
