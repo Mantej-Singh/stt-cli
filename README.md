@@ -272,7 +272,7 @@ This is an initial release. Future updates will include:
 - 🔒 **Privacy-First Design** - Audio never leaves your machine in Whisper mode (100% local processing)
 
 > [!NOTE]
-> **Licensing Note:** This application uses OpenAI's Whisper model under the MIT License, which permits free commercial use, modification, and distribution. The `faster-whisper` implementation is also MIT licensed. All audio processing happens locally on your device.
+> **Licensing Note:** This application uses OpenAI's Whisper model under the MIT License, which permits free commercial use, modification, and distribution. The `faster-whisper` implementation is also MIT licensed. All audio processing happens locally on your device. Learn more about Whisper [here](https://github.com/openai/whisper).
 
 **📚 Documentation:**
 - [`/docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) - System architecture overview
