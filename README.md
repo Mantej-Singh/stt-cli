@@ -64,6 +64,14 @@ The application runs as a system tray icon, works with any CLI window, and bypas
   <p><i>System architecture overview showing hybrid speech-to-text engine and multi-threaded design. See <a href="/docs/ARCHITECTURE.md">detailed documentation</a> for technical deep dive.</i></p>
 </div>
 
+**Core Technology Stack:**
+
+| Component | Library | Why |
+|-----------|---------|-----|
+| **Whisper Engine** | `faster-whisper` | 4x faster than OpenAI's vanilla Whisper |
+| **Speech Recognition** | `SpeechRecognition` | Google Web Speech API wrapper |
+| **Audio Processing** | `av` (PyAV) | FFmpeg bindings for Whisper |
+
 **Key Design Principles:**
 - **Hybrid Engine:** Auto-switches between Google (online) and Whisper (offline) based on connectivity
 - **Event-Driven:** Global hotkey triggers recording without blocking main thread
@@ -272,7 +280,7 @@ This is an initial release. Future updates will include:
 - 🔒 **Privacy-First Design** - Audio never leaves your machine in Whisper mode (100% local processing)
 
 > [!NOTE]
-> **Licensing Note:** This application uses OpenAI's Whisper model under the MIT License, which permits free commercial use, modification, and distribution. The `faster-whisper` implementation is also MIT licensed. All audio processing happens locally on your device. Learn more about Whisper [here](https://github.com/openai/whisper).
+> **Licensing Note:** This application uses OpenAI's Whisper model under the MIT License, which permits free commercial use, modification, and distribution. The `faster-whisper` implementation is also MIT licensed. All audio processing happens locally on your device. Learn more: [Whisper](https://github.com/openai/whisper) | [faster-whisper](https://github.com/SYSTRAN/faster-whisper).
 
 **📚 Documentation:**
 - [`/docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) - System architecture overview
